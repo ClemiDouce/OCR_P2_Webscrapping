@@ -50,6 +50,8 @@ def search_product(url):
     prod_title = prod_soup.h1.string
     if len(prod_soup.select("div#product_description + p")) > 0:
         prod_desc = prod_soup.select("div#product_description + p")[0].string
+    else:
+        prod_desc = "No Description"
     prod_img_url = prod_soup.img["src"]
     # print(
     #     f"Title : {prod_title} / Desc : {prod_desc[:40]}.. / Img Url : {prod_img_url}"
