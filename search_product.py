@@ -26,9 +26,9 @@ def search_product(url):
         'p', class_="star-rating")['class'][-1])
     return {
         'page': prod_page.content,
-        'title': prod_page,
+        'title': prod_title,
         'desc': prod_desc,
-        'url': prod_img_url,
+        'img_url': prod_img_url,
         'upc': prod_upc,
         'price_excl': prod_price_excl,
         'price_incl': prod_price_incl,
