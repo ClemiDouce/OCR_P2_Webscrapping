@@ -3,6 +3,19 @@ from bs4 import BeautifulSoup
 from utils import format_rating
 
 
+def search_products_by_category(url):
+    product_list = []
+    base_url = url[:37]
+    cat_page = requests.get(url)
+    cat_soup = BeautifulSoup(cat_page.content, 'html.parser')
+    list_product = cat_soup('article', class_="product_pod")
+    for product in list_product:
+        product_url = base_url + product.a['href'][9:]
+        product_list.append(search_product(product_url))
+    return product_list
+
+
+
 def search_product(url):
     prod_page = requests.get(url)
     prod_soup = BeautifulSoup(prod_page.content, 'html.parser')
@@ -39,6 +52,9 @@ def search_product(url):
 
 
 if __name__ == "__main__":
-    product = search_product(
-        "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")
-    print(product["category"])
+    my_list = search_products_by_category("https://books.toscrape.com/catalogue/category/books/mystery_3/index.html")
+    for book in my_list:
+        print(book['title'])
+    # product = search_product(
+    #     "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")
+    # print(product["category"])
