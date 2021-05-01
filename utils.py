@@ -12,8 +12,8 @@ def format_rating(rating):
     else:
         return 1
 
-def dict_to_csv(book_list):
-    with open('books.csv', 'w', newline='') as csvfile:
+def dict_to_csv(book_list, filename="book.csv"):
+    with open(filename, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=['title','desc', 'img_url', 'upc', 'price_excl', 'price_incl', 'available', 'category', 'rating', 'page_url'])
         writer.writeheader()
         for book in book_list:
