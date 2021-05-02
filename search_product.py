@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from utils import format_rating, dict_to_csv, get_img
+import settings
 
 
 def get_all_categories():
@@ -65,7 +66,8 @@ def search_product(url):
     else:
         prod_desc = "No Description"
     prod_img_url = "https://books.toscrape.com/" + prod_soup.img["src"][6:]
-    get_img(prod_img_url, prod_title[:12].replace(":", " "))
+    if settings.download_image == True:
+        get_img(prod_img_url, prod_title[:12].replace(":", " "))
 
     # print(
     #     f"Title : {prod_title} / Desc : {prod_desc[:40]}.. / Img Url : {prod_img_url}"
