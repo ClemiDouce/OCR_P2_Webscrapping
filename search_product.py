@@ -2,6 +2,19 @@ import requests
 from bs4 import BeautifulSoup
 from utils import format_rating
 
+def get_all_categories():
+    url = "https://books.toscrape.com/index.html"
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
+
+    tag_list = soup.select('li > ul > li > a')
+    list_category = []
+    for tag in tag_list:
+        list_category.append({
+            'label' :  tag.string.strip(),
+            'url' : url.replace('index.html',tag['href'])
+        })
+    return list_category
 
 def search_all():
     list_product = []
@@ -11,7 +24,6 @@ def search_all():
 
     list_category = list(map(lambda tag:tag['href'], soup.select('li > ul > li > a')))
     for category in list_category:
-        print(category)
         result = search_products_by_category("https://books.toscrape.com/" + category)
         list_product = [*list_product, *result]
     return list_product
@@ -30,8 +42,6 @@ def search_products_by_category(url):
         product_list.append(product)
     while cat_soup.find('li', class_="next"):
         page_counter += 1
-        print(page_counter)
-        # next_url = '/'.join(url.split('/')[:-1]) + f'/page-{page_counter}.html'
         next_url = url.replace('index.html', f'page-{page_counter}.html')
         cat_page = requests.get(next_url)
         cat_soup = BeautifulSoup(cat_page.content, "html.parser")
@@ -98,5 +108,6 @@ if __name__ == "__main__":
     #     "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
     # )
     # print(product)
-    result = search_all()
-    print(len(result))
+    # result = search_all()
+    # print(len(result))
+    # print(get_all_categories()[0])
