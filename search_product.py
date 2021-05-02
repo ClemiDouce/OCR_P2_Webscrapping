@@ -1,33 +1,32 @@
 import requests
 from bs4 import BeautifulSoup
-from utils import format_rating
+from utils import format_rating, dict_to_csv, get_img
+
 
 def get_all_categories():
     url = "https://books.toscrape.com/index.html"
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
 
-    tag_list = soup.select('li > ul > li > a')
+    tag_list = soup.select("li > ul > li > a")
     list_category = []
     for tag in tag_list:
-        list_category.append({
-            'label' :  tag.string.strip(),
-            'url' : url.replace('index.html',tag['href'])
-        })
+        list_category.append(
+            {"label": tag.string.strip(), "url": url.replace("index.html", tag["href"])}
+        )
     return list_category
 
+
 def search_all():
-    list_product = []
     url = "https://books.toscrape.com/index.html"
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
 
-    list_category = list(map(lambda tag:tag['href'], soup.select('li > ul > li > a')))
+    list_category = get_all_categories()
     for category in list_category:
-        result = search_products_by_category("https://books.toscrape.com/" + category)
-        list_product = [*list_product, *result]
-    return list_product
-    
+        result = search_products_by_category(category["url"])
+        result = dict_to_csv(result, category["label"])
+
 
 def search_products_by_category(url):
     product_list = []
@@ -40,9 +39,9 @@ def search_products_by_category(url):
         product_url = base_url + product.a["href"][9:]
         product = search_product(product_url)
         product_list.append(product)
-    while cat_soup.find('li', class_="next"):
+    while cat_soup.find("li", class_="next"):
         page_counter += 1
-        next_url = url.replace('index.html', f'page-{page_counter}.html')
+        next_url = url.replace("index.html", f"page-{page_counter}.html")
         cat_page = requests.get(next_url)
         cat_soup = BeautifulSoup(cat_page.content, "html.parser")
         list_product = cat_soup("article", class_="product_pod")
@@ -50,7 +49,7 @@ def search_products_by_category(url):
             product_url = base_url + product.a["href"][9:]
             product = search_product(product_url)
             product_list.append(product)
-        
+
     return product_list
 
 
@@ -65,7 +64,9 @@ def search_product(url):
         prod_desc = prod_soup.select("div#product_description + p")[0].string
     else:
         prod_desc = "No Description"
-    prod_img_url = prod_soup.img["src"]
+    prod_img_url = "https://books.toscrape.com/" + prod_soup.img["src"][6:]
+    get_img(prod_img_url, prod_title[:12].replace(":", " "))
+
     # print(
     #     f"Title : {prod_title} / Desc : {prod_desc[:40]}.. / Img Url : {prod_img_url}"
     # )
@@ -91,7 +92,7 @@ def search_product(url):
         "page_url": url,
         "title": prod_title,
         "desc": prod_desc,
-        "img_url": base_url + prod_img_url[:9],
+        "img_url": prod_img_url,
         "upc": prod_upc,
         "price_excl": prod_price_excl,
         "price_incl": prod_price_incl,
@@ -102,12 +103,15 @@ def search_product(url):
 
 
 if __name__ == "__main__":
-    # my_list = search_products_by_category("https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html")
-    # print(len(my_list))
+    pass
+    my_list = search_products_by_category(
+        "https://books.toscrape.com/catalogue/category/books/travel_2/index.html"
+    )
+    print(len(my_list))
     # product = search_product(
     #     "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
     # )
-    # print(product)
+    # print(product['img_url'])
     # result = search_all()
     # print(len(result))
     # print(get_all_categories()[0])
