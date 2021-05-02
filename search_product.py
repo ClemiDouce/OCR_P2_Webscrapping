@@ -19,24 +19,27 @@ def search_all():
 
 def search_products_by_category(url):
     product_list = []
-    page_counter = 0
+    page_counter = 1
     base_url = url[:37]
     cat_page = requests.get(url)
     cat_soup = BeautifulSoup(cat_page.content, "html.parser")
     list_product = cat_soup("article", class_="product_pod")
     for product in list_product:
         product_url = base_url + product.a["href"][9:]
-        product_list.append(search_product(product_url))
+        product = search_product(product_url)
+        product_list.append(product)
     while cat_soup.find('li', class_="next"):
         page_counter += 1
         print(page_counter)
-        next_url = '/'.join(url.split('/')[:-1]) + f'/page-{page_counter}.html'
+        # next_url = '/'.join(url.split('/')[:-1]) + f'/page-{page_counter}.html'
+        next_url = url.replace('index.html', f'page-{page_counter}.html')
         cat_page = requests.get(next_url)
         cat_soup = BeautifulSoup(cat_page.content, "html.parser")
         list_product = cat_soup("article", class_="product_pod")
         for product in list_product:
             product_url = base_url + product.a["href"][9:]
-            product_list.append(search_product(product_url))
+            product = search_product(product_url)
+            product_list.append(product)
         
     return product_list
 
@@ -89,11 +92,11 @@ def search_product(url):
 
 
 if __name__ == "__main__":
-    my_list = search_products_by_category("https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html")
-    len(my_list)
+    # my_list = search_products_by_category("https://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html")
+    # print(len(my_list))
     # product = search_product(
     #     "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
     # )
     # print(product)
-    # result = search_all()
-    # print(len(result))
+    result = search_all()
+    print(len(result))
