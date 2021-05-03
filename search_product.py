@@ -66,7 +66,7 @@ def search_product(url):
     else:
         prod_desc = "No Description"
     prod_img_url = "https://books.toscrape.com/" + prod_soup.img["src"][6:]
-    if settings.download_image == True:
+    if settings.download_image_option == True:
         get_img(prod_img_url, prod_title[:12].replace(":", " "))
 
     # print(
