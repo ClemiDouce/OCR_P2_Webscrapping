@@ -27,7 +27,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("-z", "--zip", help="Zip img and csv", action="store_true")
     args = parser.parse_args()
-    settings.download_image_option = args.download
+    settings.download_image_option = args.image
     settings.zip_option = args.zip
 
     if args.all:
