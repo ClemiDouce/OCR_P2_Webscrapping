@@ -4,6 +4,7 @@ import requests
 from zipfile import ZipFile
 import settings
 
+
 def format_rating(rating):
     if rating == "Five":
         return 5
@@ -16,16 +17,20 @@ def format_rating(rating):
     else:
         return 1
 
+
 def dict_to_csv(book_list, filename="book"):
     final_filename = f'{filename}.csv'
     if not os.path.exists('csv/'):
         os.mkdir('csv/')
     with open(f'csv/{final_filename}', 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=['title','desc', 'img_url', 'upc', 'price_excl', 'price_incl', 'available', 'category', 'rating', 'page_url'])
+        writer = csv.DictWriter(csvfile,
+                                fieldnames=['title', 'desc', 'img_url', 'upc', 'price_excl', 'price_incl', 'available',
+                                            'category', 'rating', 'page_url'])
         writer.writeheader()
         for book in book_list:
             writer.writerow(book)
     settings.to_zip['csv'].append(final_filename)
+
 
 def get_img(img_url, filename="picture"):
     final_filename = f"{filename}.png"
@@ -37,6 +42,7 @@ def get_img(img_url, filename="picture"):
         file.close()
     settings.to_zip['img'].append(final_filename)
 
+
 def zip_files(filename="books"):
     if not os.path.exists('zip/'):
         os.mkdir('zip/')
@@ -45,6 +51,7 @@ def zip_files(filename="books"):
             for file in files:
                 zipObj.write(f"{directory}/{file}")
 
+
 if __name__ == "__main__":
     # get_img("https://books.toscrape.com/media/cache/fe/72/fe72f0532301ec28892ae79a629a293c.jpg", "attic")
-    zip_files('csv', ['Crime_books.csv'])
+    zip_files('csv')

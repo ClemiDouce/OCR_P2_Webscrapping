@@ -19,14 +19,10 @@ def get_all_categories():
 
 
 def search_all():
-    url = "https://books.toscrape.com/index.html"
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
-
     list_category = get_all_categories()
     for category in list_category:
         result = search_products_by_category(category["url"])
-        result = dict_to_csv(result, category["label"])
+        dict_to_csv(result, category["label"])
 
 
 def search_products_by_category(url):
@@ -56,7 +52,6 @@ def search_products_by_category(url):
 
 def search_product(url):
     # print(url)
-    base_url = url[:37]
     prod_page = requests.get(url)
     prod_soup = BeautifulSoup(prod_page.content, "html.parser")
     # Titre, Desc, Img URL
@@ -66,7 +61,7 @@ def search_product(url):
     else:
         prod_desc = "No Description"
     prod_img_url = "https://books.toscrape.com/" + prod_soup.img["src"][6:]
-    if settings.download_image_option == True:
+    if settings.download_image_option:
         get_img(prod_img_url, prod_title[:12].replace(":", " "))
 
     # print(
