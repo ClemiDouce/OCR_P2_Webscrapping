@@ -47,7 +47,7 @@ if __name__ == "__main__":
             with Loader(desc=f"Web Scrapping de la categorie {categorie_choice} en cours ... "):
                 result = search_products_by_category(list_categories[choice]["url"])
                 dict_to_csv(result, f"{categorie_choice}_books")
-                if settings.zip_option == True:
+                if settings.zip_option:
                     zip_files(f"{categorie_choice}_results")
         except IndexError:
             print("Le chiffre entrée n'existe pas")
@@ -63,7 +63,7 @@ if __name__ == "__main__":
                     product = [search_product(args.product)]
                     product_title = product[0]["title"][:10]
                     dict_to_csv(product, product[0]["title"][:10] + ".csv")
-                    if settings.zip_option == True:
+                    if settings.zip_option:
                         zip_files(product_title)
             else:
                 print("Vous n'avez pas envoyé un lien de book.toscrape")
