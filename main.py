@@ -6,10 +6,11 @@ from search_product import (
     search_product,
     search_products_by_category,
     search_all,
-    get_all_categories,
+    get_categories,
 )
 from utils import dict_to_csv, zip_files
 import settings
+from loading import Loader
 
 
 if __name__ == "__main__":
@@ -21,7 +22,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "-a", "--all", help="if you want to search all the site", action="store_true"
     )
-    parser.add_argument("-p", "--product", help="Get all info for a product")
+    parser.add_argument(
+        "-p", "--product", help="Get all info for a product"
+    )
     parser.add_argument(
         "-i", "--image", help="Download image of each product", action="store_true"
     )
@@ -31,9 +34,10 @@ if __name__ == "__main__":
     settings.zip_option = args.zip
 
     if args.all:
-        book_list = search_all()
+        with Loader(desc="Web Scraping de tout le site en cours ..."):
+            search_all()
     elif args.category:
-        list_categories = get_all_categories()
+        list_categories = get_categories()
         for index, category in enumerate(list_categories):
             print(f"[{index}] {category['label']}")
         choice = input(
@@ -41,14 +45,15 @@ if __name__ == "__main__":
         )
         try:
             choice = int(choice)
-            result = search_products_by_category(list_categories[choice]["url"])
             categorie_choice = list_categories[choice]["label"]
-            dict_to_csv(result, f"{categorie_choice}_books")
-            if settings.zip_option == True:
-                zip_files(f"{categorie_choice}_results")
+            with Loader(desc=f"Web Scrapping de la categorie {categorie_choice} en cours ... "):
+                result = search_products_by_category(list_categories[choice]["url"])
+                dict_to_csv(result, f"{categorie_choice}_books")
+                if settings.zip_option == True:
+                    zip_files(f"{categorie_choice}_results")
         except IndexError:
             print("Le chiffre entrée n'existe pas")
-        except ValueError as err:
+        except ValueError:
             print("Vous n'avez pas entré un chiffre")
     elif args.product:
         if args.product != "":
@@ -56,11 +61,12 @@ if __name__ == "__main__":
                 r"^(https:\/\/books.toscrape.com\/catalogue\/)[\w\W]*(index.html)$",
                 args.product,
             ):
-                product = [search_product(args.product)]
-                product_title = product[0]["title"][:10]
-                dict_to_csv(product, product[0]["title"][:10] + ".csv")
-                if settings.zip_option == True:
-                    zip_files(product_title)
+                with Loader("Web Scraping de votre produit en cours ... "):
+                    product = [search_product(args.product)]
+                    product_title = product[0]["title"][:10]
+                    dict_to_csv(product, product[0]["title"][:10] + ".csv")
+                    if settings.zip_option == True:
+                        zip_files(product_title)
             else:
                 print("Vous n'avez pas envoyé un lien de book.toscrape")
         else:
