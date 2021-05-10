@@ -3,9 +3,11 @@ from bs4 import BeautifulSoup
 from utils import format_rating, dict_to_csv, get_img
 import settings
 
+URL = "https://books.toscrape.com"
 
-def get_all_categories():
-    url = "https://books.toscrape.com/index.html"
+
+def get_categories():
+    url = f"{URL}/index.html"
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
 
@@ -19,14 +21,14 @@ def get_all_categories():
 
 
 def search_all():
-    url = "https://books.toscrape.com/index.html"
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
+        url = f"{URL}/index.html"
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, "html.parser")
 
-    list_category = get_all_categories()
-    for category in list_category:
-        result = search_products_by_category(category["url"])
-        result = dict_to_csv(result, category["label"])
+        list_category = get_categories()
+        for category in list_category:
+            result = search_products_by_category(category["url"])
+            result = dict_to_csv(result, category["label"])
 
 
 def search_products_by_category(url):
@@ -55,7 +57,6 @@ def search_products_by_category(url):
 
 
 def search_product(url):
-    # print(url)
     base_url = url[:37]
     prod_page = requests.get(url)
     prod_soup = BeautifulSoup(prod_page.content, "html.parser")
@@ -65,13 +66,9 @@ def search_product(url):
         prod_desc = prod_soup.select("div#product_description + p")[0].string
     else:
         prod_desc = "No Description"
-    prod_img_url = "https://books.toscrape.com/" + prod_soup.img["src"][6:]
+    prod_img_url = f"{URL}/" + prod_soup.img["src"][6:]
     if settings.download_image_option == True:
         get_img(prod_img_url, prod_title[:12].replace(":", " "))
-
-    # print(
-    #     f"Title : {prod_title} / Desc : {prod_desc[:40]}.. / Img Url : {prod_img_url}"
-    # )
 
     # UPC, Price, Count, Categorie
     prod_info_tab = map(lambda tag: tag.string, prod_soup("td"))
@@ -80,9 +77,9 @@ def search_product(url):
         prod_category,
         prod_price_excl,
         prod_price_incl,
-        prod_taxes,
+        _,
         prod_count,
-        prod_reviews_count,
+        _,
     ) = prod_info_tab
 
     # Format Available
@@ -102,18 +99,3 @@ def search_product(url):
         "category": prod_category,
         "rating": prod_rating,
     }
-
-
-if __name__ == "__main__":
-    pass
-    my_list = search_products_by_category(
-        "https://books.toscrape.com/catalogue/category/books/travel_2/index.html"
-    )
-    print(len(my_list))
-    # product = search_product(
-    #     "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
-    # )
-    # print(product['img_url'])
-    # result = search_all()
-    # print(len(result))
-    # print(get_all_categories()[0])

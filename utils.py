@@ -44,7 +44,3 @@ def zip_files(filename="books"):
         for directory, files in settings.to_zip.items():
             for file in files:
                 zipObj.write(f"{directory}/{file}")
-
-if __name__ == "__main__":
-    # get_img("https://books.toscrape.com/media/cache/fe/72/fe72f0532301ec28892ae79a629a293c.jpg", "attic")
-    zip_files('csv', ['Crime_books.csv'])
