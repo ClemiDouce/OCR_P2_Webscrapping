@@ -1,7 +1,5 @@
-import requests
 import argparse
 import re
-from bs4 import BeautifulSoup
 from search_product import (
     search_product,
     search_products_by_category,
@@ -58,7 +56,7 @@ if __name__ == "__main__":
     elif args.product:
         if args.product != "":
             if re.search(
-                r"^(https:\/\/books.toscrape.com\/catalogue\/)[\w\W]*(index.html)$",
+                r"^(https:[/]{2}books.toscrape.com[/]catalogue[/])[\w\W]*(index.html)$",
                 args.product,
             ):
                 with Loader("Web Scraping de votre produit en cours ... "):

@@ -21,14 +21,14 @@ def get_categories():
 
 
 def search_all():
-        url = f"{URL}/index.html"
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, "html.parser")
+    url = f"{URL}/index.html"
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
 
-        list_category = get_categories()
-        for category in list_category:
-            result = search_products_by_category(category["url"])
-            result = dict_to_csv(result, category["label"])
+    list_category = get_categories()
+    for category in list_category:
+        result = search_products_by_category(category["url"])
+        result = dict_to_csv(result, category["label"])
 
 
 def search_products_by_category(url):
@@ -57,7 +57,7 @@ def search_products_by_category(url):
 
 
 def search_product(url):
-    base_url = url[:37]
+    # print(url)
     prod_page = requests.get(url)
     prod_soup = BeautifulSoup(prod_page.content, "html.parser")
     # Titre, Desc, Img URL
