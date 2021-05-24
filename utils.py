@@ -5,7 +5,10 @@ from zipfile import ZipFile
 import settings
 
 
-def format_rating(rating):
+def format_rating(rating: str) -> int:
+    """
+    Return an int formatted rating
+    """
     if rating == "Five":
         return 5
     elif rating == "Four":
@@ -18,7 +21,10 @@ def format_rating(rating):
         return 1
 
 
-def dict_to_csv(book_list, filename="book"):
+def dict_to_csv(book_list: list, filename: str = "book"):
+    """
+    Save a booklist on CSV format
+    """
     final_filename = f'{filename}.csv'
     if not os.path.exists('csv/'):
         os.mkdir('csv/')
@@ -32,7 +38,10 @@ def dict_to_csv(book_list, filename="book"):
     settings.to_zip['csv'].append(final_filename)
 
 
-def get_img(img_url, filename="picture"):
+def get_img(img_url: str, filename: str = "picture"):
+    """
+    Save an img from an URL
+    """
     final_filename = f"{filename}.png"
     response = requests.get(img_url)
     if not os.path.exists('img/'):
@@ -43,7 +52,10 @@ def get_img(img_url, filename="picture"):
     settings.to_zip['img'].append(final_filename)
 
 
-def zip_files(filename="books"):
+def zip_files(filename: str = "books"):
+    """
+    Zip all files registered in the option file
+    """
     if not os.path.exists('zip/'):
         os.mkdir('zip/')
     with ZipFile(f'zip/{filename}.zip', 'w') as zipObj:

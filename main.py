@@ -12,7 +12,7 @@ from loading import Loader
 
 
 if __name__ == "__main__":
-    # Parser
+    # Arg Parser
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-c", "--category", help="the category you want to search", action="store_true"
@@ -34,6 +34,8 @@ if __name__ == "__main__":
     if args.all:
         with Loader(desc="Web Scraping de tout le site en cours ..."):
             search_all()
+            if settings.zip_option:
+                zip_files(f"all_results")
     elif args.category:
         list_categories = get_categories()
         for index, category in enumerate(list_categories):

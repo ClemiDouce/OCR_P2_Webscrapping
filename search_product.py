@@ -7,6 +7,9 @@ URL = "https://books.toscrape.com"
 
 
 def get_categories():
+    """
+    Return categories name in a list
+    """
     url = f"{URL}/index.html"
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
@@ -21,13 +24,19 @@ def get_categories():
 
 
 def search_all():
+    """
+    Get all books in all categories of the book.toscrape site
+    """
     list_category = get_categories()
     for category in list_category:
         result = search_products_by_category(category["url"])
         dict_to_csv(result, category["label"])
 
 
-def search_products_by_category(url):
+def search_products_by_category(url: str) -> list:
+    """
+    Return product for a given category
+    """
     product_list = []
     page_counter = 1
     base_url = url[:37]
@@ -52,8 +61,10 @@ def search_products_by_category(url):
     return product_list
 
 
-def search_product(url):
-    # print(url)
+def search_product(url: str) -> dict:
+    """
+    Return a product for a given url
+    """
     prod_page = requests.get(url)
     prod_soup = BeautifulSoup(prod_page.content, "html.parser")
     # Titre, Desc, Img URL
