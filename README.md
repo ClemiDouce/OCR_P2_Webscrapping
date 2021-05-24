@@ -8,7 +8,8 @@ Ce projet a pour but de créer un script Python permettant d'aller chercher des 
 
 Pour mettre en place l'environnement virtuel nécessaire pour faire fonctionner le script, procéder comme suit :
 
-Dans un terminal ouvert dans le dossier ou vous avez cloné le repository, créez un environnement virtuel a l'aide de venv :
+Dans un terminal ouvert dans le dossier où vous avez cloné le repository, créez un environnement virtuel a l'aide de 
+venv :
 
 ```bash
 python3 -m venv [nom environnement]
@@ -28,9 +29,10 @@ Mac / Linux
 source env/bin/activate
 ```
 
-Pour vérifier que l'environnement est bien activé, le nom de l'environnement s'affiche a gauche de l'indicateur de position dans le terminal
+Si l'environnement c'est bien activé, le nom de l'environnement s'affichera à gauche de l'indicateur de position 
+dans le terminal
 
-Installez tout les packages dans ce nouvel environnement listé dans le fichier 'requirements.txt' :
+Installez tout les packages listé dans le fichier 'requirements.txt' dans votre environnement virtuel :
 
 ```bash
 pip install -r requirements.txt
@@ -52,7 +54,7 @@ Vérifier que tout les packages sont bien installé a l'aide de la commande `pip
 
 -i --image : Les images de tout les produits parcourus seront téléchargé et zippé dans le dossier image.
 
--z --zip : Toutes les images et les csv seront compressé dans un dossier .zip
+-z --zip : Toutes les csv seront compressé dans un dossier .zip
 
 ### Exemple d'utilisation
 
@@ -70,7 +72,7 @@ python .\main.py -c -z
 
 Parcourir une catégorie en particulier en zippant les .csv et images obtenus :
 
-```bas
+```bash
 python .\main.py -c -i -z
 ```
 
