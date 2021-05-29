@@ -1,5 +1,6 @@
 import argparse
 import re
+import os
 from search_product import (
     search_product,
     search_products_by_category,
@@ -31,6 +32,9 @@ if __name__ == "__main__":
     settings.download_image_option = args.image
     settings.zip_option = args.zip
 
+    if not os.path.exists('data/'):
+        os.mkdir('data/')
+
     if args.all:
         with Loader(desc="Web Scraping de tout le site en cours ..."):
             search_all()
@@ -45,12 +49,12 @@ if __name__ == "__main__":
         )
         try:
             choice = int(choice)
-            categorie_choice = list_categories[choice]["label"]
-            with Loader(desc=f"Web Scrapping de la categorie {categorie_choice} en cours ... "):
-                result = search_products_by_category(list_categories[choice]["url"])
-                dict_to_csv(result, f"{categorie_choice}_books")
+            categorie_choice = list_categories[choice]
+            with Loader(desc=f"Web Scrapping de la categorie {categorie_choice['label']} en cours ... "):
+                result = search_products_by_category(categorie_choice['url'], categorie_choice['label'])
+                dict_to_csv(result, f"{categorie_choice['label']}_books")
                 if settings.zip_option:
-                    zip_files(f"{categorie_choice}_results")
+                    zip_files(f"{categorie_choice['label']}_results")
         except IndexError:
             print("Le chiffre entrée n'existe pas")
         except ValueError:
@@ -64,7 +68,7 @@ if __name__ == "__main__":
                 with Loader("Web Scraping de votre produit en cours ... "):
                     product = [search_product(args.product)]
                     product_title = product[0]["title"][:10]
-                    dict_to_csv(product, product[0]["title"][:10] + ".csv")
+                    dict_to_csv(product, product[0]["title"][:10])
                     if settings.zip_option:
                         zip_files(product_title)
             else:

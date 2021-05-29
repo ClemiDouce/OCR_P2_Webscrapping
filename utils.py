@@ -26,27 +26,34 @@ def dict_to_csv(book_list: list, filename: str = "book"):
     Save a booklist on CSV format
     """
     final_filename = f'{filename}.csv'
-    if not os.path.exists('csv/'):
-        os.mkdir('csv/')
-    with open(f'csv/{final_filename}', 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.DictWriter(csvfile,
-                                fieldnames=['title', 'desc', 'img_url', 'upc', 'price_excl', 'price_incl', 'available',
-                                            'category', 'rating', 'page_url'])
+    if not os.path.exists('data/csv/'):
+        os.mkdir('data/csv/')
+    with open(f'data/csv/{final_filename}', 'w', newline='', encoding='utf-8_SIG') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=['title', 'desc', 'img_url', 'upc', 'price_excl', 'price_incl',
+                                                     'available',
+                                                    'category', 'rating', 'page_url'])
         writer.writeheader()
         for book in book_list:
             writer.writerow(book)
+
     settings.to_zip['csv'].append(final_filename)
 
 
-def get_img(img_url: str, filename: str = "picture"):
+def get_img(img_url: str, filename: str, categorie: str = 'none'):
     """
     Save an img from an URL
     """
     final_filename = f"{filename}.png"
+    if categorie != 'none':
+        final_filename = categorie + '/' + final_filename
     response = requests.get(img_url)
-    if not os.path.exists('img/'):
-        os.mkdir('img/')
-    with open(f"img/{final_filename}", "wb") as file:
+    if not os.path.exists('data/img/'):
+        os.mkdir('data/img/')
+    else:
+        if categorie != 'none' and not os.path.exists(f"data/img/{categorie}/"):
+            os.mkdir(f"data/img/{categorie}/")
+
+    with open(f"data/img/{final_filename}", "wb") as file:
         file.write(response.content)
         file.close()
     settings.to_zip['img'].append(final_filename)
@@ -56,9 +63,9 @@ def zip_files(filename: str = "books"):
     """
     Zip all files registered in the option file
     """
-    if not os.path.exists('zip/'):
-        os.mkdir('zip/')
-    with ZipFile(f'zip/{filename}.zip', 'w') as zipObj:
+    if not os.path.exists('data/zip/'):
+        os.mkdir('data/zip/')
+    with ZipFile(f'data/zip/{filename}.zip', 'w') as zipObj:
         for directory, files in settings.to_zip.items():
             for file in files:
-                zipObj.write(f"{directory}/{file}")
+                zipObj.write(f"data/{directory}/{file}")

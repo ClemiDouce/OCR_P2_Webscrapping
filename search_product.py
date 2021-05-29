@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
-from utils import format_rating, dict_to_csv, get_img
+
 import settings
+from utils import format_rating, dict_to_csv, get_img
 
 URL = "https://books.toscrape.com"
 
@@ -18,7 +19,7 @@ def get_categories():
     list_category = []
     for tag in tag_list:
         list_category.append(
-            {"label": tag.string.strip(), "url": url.replace("index.html", tag["href"])}
+                {"label": tag.string.strip(), "url": url.replace("index.html", tag["href"])}
         )
     return list_category
 
@@ -29,11 +30,11 @@ def search_all():
     """
     list_category = get_categories()
     for category in list_category:
-        result = search_products_by_category(category["url"])
+        result = search_products_by_category(category["url"], category["label"])
         dict_to_csv(result, category["label"])
 
 
-def search_products_by_category(url: str) -> list:
+def search_products_by_category(url: str, name: str) -> list:
     """
     Return product for a given category
     """
@@ -45,7 +46,7 @@ def search_products_by_category(url: str) -> list:
     list_product = cat_soup("article", class_="product_pod")
     for product in list_product:
         product_url = base_url + product.a["href"][9:]
-        product = search_product(product_url)
+        product = search_product(product_url, name)
         product_list.append(product)
     while cat_soup.find("li", class_="next"):
         page_counter += 1
@@ -55,13 +56,13 @@ def search_products_by_category(url: str) -> list:
         list_product = cat_soup("article", class_="product_pod")
         for product in list_product:
             product_url = base_url + product.a["href"][9:]
-            product = search_product(product_url)
+            product = search_product(product_url, name)
             product_list.append(product)
 
     return product_list
 
 
-def search_product(url: str) -> dict:
+def search_product(url: str, category: str = 'none') -> dict:
     """
     Return a product for a given url
     """
@@ -74,8 +75,6 @@ def search_product(url: str) -> dict:
     else:
         prod_desc = "No Description"
     prod_img_url = f"{URL}/" + prod_soup.img["src"][6:]
-    if settings.download_image_option:
-        get_img(prod_img_url, prod_title[:12].replace(":", " "))
 
     # UPC, Price, Count, Categorie
     prod_info_tab = map(lambda tag: tag.string, prod_soup("td"))
@@ -88,6 +87,14 @@ def search_product(url: str) -> dict:
         prod_count,
         _,
     ) = prod_info_tab
+
+    if settings.download_image_option:
+        if category == 'none':
+            filename = prod_upc
+            get_img(prod_img_url, filename.lower())
+        else:
+            filename = f"{category}_{prod_upc}"
+            get_img(prod_img_url,filename.lower(), category)
 
     # Format Available
     prod_count = "".join(filter(str.isdigit, prod_count))
